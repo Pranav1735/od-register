@@ -11,130 +11,168 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --border: #2a2d3a;
-    --accent: #4f9cf9;
-    --green: #22c55e;
-    --red: #ef4444;
+    --bg: #030712;
+    --card: rgba(17, 24, 39, 0.7);
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #6366f1;
+    --text: #f9fafb;
+    --muted: #9ca3af;
+    --glass: rgba(255, 255, 255, 0.03);
+    --input-bg: rgba(0, 0, 0, 0.3);
+    --green: #10b981;
+    --red: #f43f5e;
     --yellow: #f59e0b;
-    --text: #e8eaf0;
-    --muted: #6b7280;
-    --input-bg: #12141e;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+    color: var(--text);
+    min-height: 100vh;
+  }
 
   /* LOGIN */
   .login-wrap {
     display: flex; align-items: center; justify-content: center; min-height: 100vh;
   }
   .login-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-    padding: 2.5rem; width: 340px; text-align: center;
+    background: var(--card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 3rem;
+    width: 380px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }
-  .login-card h2 { font-family: 'Space Mono', monospace; color: var(--accent); margin-bottom: 0.5rem; }
-  .login-card p { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+  .login-card h2 { font-family: 'Outfit', sans-serif; color: var(--accent); margin-bottom: 0.5rem; font-size: 1.8rem; }
+  .login-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
   .login-card input {
-    width: 100%; background: var(--input-bg); border: 1.5px solid var(--border);
-    border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif;
-    font-size: 1rem; padding: 0.7rem 1rem; outline: none; text-align: center;
-    letter-spacing: 3px; margin-bottom: 1rem;
+    width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+    border-radius: 12px; color: var(--text); font-family: inherit;
+    font-size: 1.1rem; padding: 0.8rem 1rem; outline: none; text-align: center;
+    letter-spacing: 4px; margin-bottom: 1.5rem; transition: 0.3s;
   }
-  .login-card input:focus { border-color: var(--accent); }
+  .login-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); }
   .login-btn {
-    width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
-    padding: 0.75rem; cursor: pointer;
+    width: 100%; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: #fff; border: none; border-radius: 12px;
+    font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600;
+    padding: 0.9rem; cursor: pointer; transition: 0.3s;
   }
-  .login-btn:hover { opacity: 0.85; }
-  .login-err { color: var(--red); font-size: 0.85rem; margin-top: 0.75rem; display: none; }
+  .login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .login-err { color: var(--red); font-size: 0.85rem; margin-top: 1rem; font-weight: 500; display: none; }
 
   /* DASHBOARD */
-  #dashboard { display: none; }
+  #dashboard { padding-bottom: 3rem; }
 
   .topbar {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 1rem;
+    background: rgba(3, 7, 18, 0.5);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 1.2rem 2.5rem; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem; sticky; top: 0; z-index: 100;
   }
-  .topbar h1 { font-family: 'Space Mono', monospace; color: var(--accent); font-size: 1.15rem; }
+  .topbar h1 { font-family: 'Outfit', sans-serif; color: #fff; font-size: 1.4rem; font-weight: 700; }
 
-  .topbar-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .topbar-actions { display: flex; gap: 0.75rem; }
   .btn {
-    padding: 0.5rem 1rem; border-radius: 7px; font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; transition: opacity 0.2s;
+    padding: 0.6rem 1.2rem; border-radius: 10px; font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border);
+    transition: all 0.2s; background: var(--input-bg); color: var(--text);
   }
-  .btn:hover { opacity: 0.8; }
-  .btn-green { background: var(--green); color: #fff; }
-  .btn-muted { background: var(--border); color: var(--text); }
+  .btn:hover { background: var(--border); transform: translateY(-1px); }
+  .btn-green { background: var(--accent); border: none; color: #fff; }
+  .btn-green:hover { filter: brightness(1.1); }
 
   .stats-row {
-    display: flex; gap: 1rem; padding: 1.5rem 2rem; flex-wrap: wrap;
+    display: flex; gap: 1.5rem; padding: 2rem 2.5rem; flex-wrap: wrap;
   }
   .stat-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-    padding: 1rem 1.5rem; min-width: 140px; flex: 1;
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+    padding: 1.5rem; min-width: 180px; flex: 1;
+    backdrop-filter: blur(10px);
   }
-  .stat-card .num { font-family: 'Space Mono', monospace; font-size: 1.8rem; color: var(--accent); }
-  .stat-card .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+  .stat-card .num { font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 700; color: var(--accent); }
+  .stat-card .lbl { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.2rem; }
 
   .filters {
-    padding: 0 2rem 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;
+    padding: 0 2.5rem 2rem; display: flex; gap: 1.2rem; flex-wrap: wrap; align-items: flex-end;
   }
-  .filter-field { display: flex; flex-direction: column; gap: 0.3rem; }
-  .filter-field label { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .filter-field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .filter-field label { font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
   .filter-field input, .filter-field select {
-    background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 7px;
-    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
-    padding: 0.45rem 0.75rem; outline: none;
+    background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); font-family: inherit; font-size: 0.85rem;
+    padding: 0.6rem 1rem; outline: none; transition: 0.2s;
   }
-  .filter-field input:focus, .filter-field select:focus { border-color: var(--accent); }
-  .filter-field select option { background: var(--surface); }
+  .filter-field input:focus, .filter-field select:focus { border-color: var(--accent); background: rgba(99, 102, 241, 0.05); }
 
   .live-dot {
-    width: 8px; height: 8px; background: var(--green); border-radius: 50%;
-    display: inline-block; margin-right: 6px; animation: pulse 1.5s infinite;
+    width: 10px; height: 10px; background: var(--green); border-radius: 50%;
+    display: inline-block; margin-right: 10px; box-shadow: 0 0 10px var(--green);
+    animation: p-pulse 2s infinite;
   }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes p-pulse { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:0.4; transform:scale(0.8)} }
 
-  .table-wrap { padding: 0 2rem 2rem; overflow-x: auto; }
+  .table-wrap { padding: 0 2.5rem; overflow-x: auto; }
   table {
-    width: 100%; border-collapse: collapse; font-size: 0.85rem;
-    background: var(--surface); border-radius: 10px; overflow: hidden;
+    width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.9rem;
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden;
   }
   thead th {
-    background: #12141e; color: var(--muted); font-weight: 600; font-size: 0.72rem;
-    text-transform: uppercase; letter-spacing: 0.08em; padding: 0.75rem 1rem; text-align: left;
+    background: rgba(0, 0, 0, 0.2); color: var(--muted); font-weight: 700; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.1em; padding: 1.2rem 1rem; text-align: left;
     border-bottom: 1px solid var(--border);
   }
-  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: #1e2132; }
-  tbody td { padding: 0.7rem 1rem; vertical-align: middle; }
+  tbody tr { transition: 0.2s; }
+  tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+  tbody td { padding: 1rem; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child td { border-bottom: none; }
 
   .badge {
-    display: inline-block; padding: 2px 8px; border-radius: 5px;
-    font-size: 0.7rem; font-weight: 600;
+    display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
   }
-  .badge-blue  { background: #1a2f50; color: var(--accent); }
-  .badge-green { background: #0d2a0d; color: var(--green); }
-  .badge-yellow{ background: #2a1f00; color: var(--yellow); }
+  .badge-blue  { background: rgba(99, 102, 241, 0.1); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.2); }
+  .badge-green { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+  .badge-yellow{ background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
 
-  .reg-mono { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--accent); }
+  .reg-mono { font-family: 'Space Mono', monospace; font-size: 0.85rem; color: #818cf8; font-weight: 600; }
 
-  .empty-state {
-    text-align: center; padding: 3rem; color: var(--muted); font-size: 0.9rem;
+  .empty-state { text-align: center; padding: 5rem; color: var(--muted); font-size: 1rem; }
+
+  /* Fix for select dropdown visibility */
+  select option {
+    background-color: #111827;
+    color: #f9fafb;
+    padding: 10px;
   }
 
   .delete-btn {
-    background: none; border: 1px solid var(--border); border-radius: 5px;
-    color: var(--muted); font-size: 0.75rem; padding: 3px 8px; cursor: pointer;
+    background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.2);
+    border-radius: 8px; color: var(--red); font-size: 1rem; padding: 6px; cursor: pointer;
+    transition: 0.2s; display: flex; align-items: center; justify-content: center;
   }
-  .delete-btn:hover { border-color: var(--red); color: var(--red); }
+  .delete-btn:hover { background: var(--red); color: #fff; }
 
-  @media(max-width:600px) {
-    .topbar, .stats-row, .filters, .table-wrap { padding-left: 1rem; padding-right: 1rem; }
+  @media(max-width:800px) {
+    .topbar, .stats-row, .filters, .table-wrap { padding-left: 1.2rem; padding-right: 1.2rem; }
+    .stats-row { gap: 1rem; }
+    .stat-card { min-width: 140px; padding: 1.2rem; }
+    .stat-card .num { font-size: 1.8rem; }
+    .topbar h1 { font-size: 1.2rem; }
+  }
+
+  @media(max-width:500px) {
+    .filters { flex-direction: column; align-items: stretch; }
+    .filter-field input, .filter-field select { width: 100% !important; }
+    .topbar { padding: 1rem; }
+    .topbar-actions { width: 100%; justify-content: space-between; }
+    .btn { flex: 1; padding: 0.5rem; font-size: 0.75rem; text-align: center; }
   }
 </style>
 </head>
@@ -231,6 +269,10 @@
         <tr><td colspan="14" class="empty-state">Loading…</td></tr>
       </tbody>
     </table>
+  </div>
+
+  <div style="text-align:center; padding:2rem 0; border-top:1px solid var(--border); color:var(--muted); font-size:0.8rem;">
+    Powered by <a href="http://www.xiqro.in" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:600;">Xiqro - Next Gen</a>
   </div>
 </div>
 
@@ -337,7 +379,7 @@
         <td>${e.student_name || '—'}</td>
         <td style="max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis" title="${e.program||''}">${e.program || '—'}</td>
         <td><span class="badge badge-blue">${e.year || '—'}</span></td>
-        <td><span class="badge ${e.od_timing==='Full Day'?'badge-green':'badge-yellow'}">${e.od_timing || '—'}</span></td>
+        <td><span class="badge ${e.od_timing==='FULL DAY'?'badge-green':'badge-yellow'}">${e.od_timing || '—'}</span></td>
         <td style="max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis" title="${e.activity_description||''}">${e.activity_description || '—'}</td>
         <td>${e.place || '—'}</td>
         <td>${e.from_date || '—'}</td>
@@ -357,7 +399,19 @@
   }
 
   function exportExcel() {
-    const rows = filteredEntries.map((e, i) => ({
+    // Create a copy and sort by Camp Name, then by From Date
+    const sorted = [...filteredEntries].sort((a, b) => {
+      const campA = (a.camp_name || "").toLowerCase();
+      const campB = (b.camp_name || "").toLowerCase();
+      if (campA < campB) return -1;
+      if (campA > campB) return 1;
+
+      const dateA = a.from_date || "0000-00-00";
+      const dateB = b.from_date || "0000-00-00";
+      return dateA.localeCompare(dateB);
+    });
+
+    const rows = sorted.map((e, i) => ({
       'SI No': i + 1,
       'Register No': e.register_no,
       'Student Name': e.student_name,

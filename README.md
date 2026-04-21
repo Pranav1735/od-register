@@ -1,4 +1,4 @@
-# OD Register — Setup Guide
+# OD Register — Developed by Xiqro - Next Gen
 
 ## What You'll Need (all free)
 1. A **GitHub** account → github.com
@@ -122,3 +122,7 @@ Then commit the file to GitHub — Vercel auto-deploys in ~30 seconds!
 
 The admin dashboard auto-refreshes whenever any staff member submits an entry.
 You don't need to refresh the page — the green dot means it's live! 🟢
+
+---
+
+Project created and maintained by [Xiqro - Next Gen](http://www.xiqro.in).

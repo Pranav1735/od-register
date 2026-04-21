@@ -1,390 +1,665 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>OD Entry Form</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
-<script src="branches.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<style>
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --border: #2a2d3a;
-    --accent: #4f9cf9;
-    --accent2: #7c3aed;
-    --green: #22c55e;
-    --red: #ef4444;
-    --text: #e8eaf0;
-    --muted: #6b7280;
-    --input-bg: #12141e;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OD Entry Form</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="branches.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #030712;
+      --card: rgba(17, 24, 39, 0.7);
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.5);
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --glass: rgba(255, 255, 255, 0.03);
+      --input-bg: rgba(0, 0, 0, 0.3);
+      --green: #10b981;
+      --red: #f43f5e;
+    }
 
-  .header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-  .header h1 {
-    font-family: 'Space Mono', monospace;
-    font-size: 1.6rem;
-    color: var(--accent);
-    letter-spacing: -0.5px;
-  }
-  .header p { color: var(--muted); font-size: 0.9rem; margin-top: 0.4rem; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  .card {
-    max-width: 680px;
-    margin: 0 auto;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-  }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      background-image:
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.15) 0px, transparent 50%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 3rem 1rem;
+      line-height: 1.5;
+    }
 
-  .reg-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    align-items: flex-end;
-  }
-  .reg-row .field { flex: 1; }
+    .header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
 
-  .field { margin-bottom: 1.2rem; }
-  .field label {
-    display: block;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.45rem;
-  }
-  .field input, .field select, .field textarea {
-    width: 100%;
-    background: var(--input-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    padding: 0.65rem 0.9rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    border-color: var(--accent);
-  }
-  .field input.filled {
-    border-color: var(--green);
-    background: #0d1f14;
-    color: var(--green);
-    font-weight: 600;
-  }
-  .field input.error { border-color: var(--red); }
-  .field textarea { resize: vertical; min-height: 80px; }
-  .field select option { background: var(--surface); }
+    .header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+    }
 
-  .reg-hint {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 0.3rem;
-  }
-  .reg-hint span { color: var(--accent); font-family: 'Space Mono', monospace; }
+    .header p {
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 500;
+    }
 
-  .auto-badge {
-    display: inline-block;
-    font-size: 0.65rem;
-    background: #0d2a0d;
-    color: var(--green);
-    border: 1px solid var(--green);
-    border-radius: 4px;
-    padding: 1px 6px;
-    margin-left: 0.4rem;
-    vertical-align: middle;
-  }
+    .card {
+      max-width: 720px;
+      margin: 0 auto;
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
 
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
 
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 1.5rem 0;
-  }
+    .section-title::after {
+      content: '';
+      height: 1px;
+      flex: 1;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
 
-  .submit-btn {
-    width: 100%;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 0.9rem;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-    margin-top: 0.5rem;
-  }
-  .submit-btn:hover { opacity: 0.88; }
-  .submit-btn:active { transform: scale(0.98); }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .field {
+      margin-bottom: 1.5rem;
+    }
 
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--green);
-    color: #fff;
-    padding: 0.8rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
-    z-index: 999;
-    white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error-toast { background: var(--red); }
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+      transition: color 0.2s;
+    }
 
-  .admin-link {
-    text-align: center;
-    margin-top: 1.5rem;
-  }
-  .admin-link a {
-    color: var(--muted);
-    font-size: 0.8rem;
-    text-decoration: none;
-  }
-  .admin-link a:hover { color: var(--accent); }
+    .field:focus-within label {
+      color: var(--accent);
+    }
 
-  .section-title {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--accent2);
-    margin-bottom: 1rem;
-  }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 0.8rem 1rem;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-  @media (max-width: 500px) {
-    .two-col { grid-template-columns: 1fr; }
-    .card { padding: 1.2rem; }
-  }
-</style>
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.05);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    }
+
+    .field input.filled {
+      border-color: var(--green);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .field input:read-only {
+      opacity: 0.7;
+      cursor: not-allowed;
+      border-style: dashed;
+    }
+
+    /* Fix for select dropdown visibility */
+    select option {
+      background-color: #111827;
+      color: #f9fafb;
+      padding: 10px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .timing-grid {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.3rem;
+      flex-wrap: nowrap;
+    }
+
+    .timing-grid select {
+      border: none;
+      background: transparent;
+      padding: 0.5rem;
+      font-weight: 500;
+    }
+
+    .timing-grid select:focus {
+      box-shadow: none;
+    }
+
+    .timing-grid .to-divider {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .divider {
+      border: none;
+      height: 1px;
+      background: var(--border);
+      margin: 2rem 0;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
+      filter: brightness(1.1);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 100px;
+      font-weight: 600;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 999;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error-toast {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .admin-link {
+      text-align: center;
+      margin-top: 2.5rem;
+      color: var(--muted);
+    }
+
+    .admin-link a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .admin-link a:hover {
+      text-decoration: underline;
+    }
+
+    .reg-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    .reg-hint span {
+      color: var(--accent);
+      font-family: 'Space Mono', monospace;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem 0.5rem;
+      }
+
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .card {
+        padding: 1.25rem;
+        border-radius: 16px;
+        margin-top: 0;
+      }
+
+      .timing-grid {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.5rem;
+      }
+
+      .timing-grid .to-divider {
+        text-align: center;
+        font-size: 0.6rem;
+        opacity: 0.5;
+      }
+
+      .timing-grid select {
+        text-align: center;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="header">
-  <h1>📋 OD Entry Form</h1>
-  <p>Enter student details below — Branch &amp; Year fill automatically</p>
-</div>
-
-<div class="card">
-  <!-- Staff Identity -->
-  <div class="section-title">Your Details</div>
-  <div class="two-col">
-    <div class="field">
-      <label>Your Name</label>
-      <input type="text" id="enteredBy" placeholder="Staff name" />
-    </div>
-    <div class="field">
-      <label>Camp Name</label>
-      <input type="text" id="campName" placeholder="e.g. NSS Camp 2025" />
-    </div>
+  <div class="header">
+    <h1>📋 OD Entry Form</h1>
+    <p>Enter student details below — Branch &amp; Year fill automatically</p>
   </div>
 
-  <hr class="divider"/>
+  <div class="card">
+    <!-- Staff Identity -->
+    <div class="section-title">Your Details</div>
+    <div class="two-col">
+      <div class="field">
+        <label>Your Name</label>
+        <input type="text" id="enteredBy" placeholder="Staff name" />
+      </div>
+      <div class="field">
+        <label>Camp Name</label>
+        <input type="text" id="campName" placeholder="e.g. NSS Camp 2025" />
+      </div>
+    </div>
 
-  <!-- Register Number -->
-  <div class="section-title">Student Details</div>
-  <div class="field">
-    <label>Register Number</label>
-    <input type="text" id="regNo" maxlength="9" placeholder="e.g. 126CCCDD" autocomplete="off"
-           oninput="handleRegNo(this.value)" style="font-family:'Space Mono',monospace; font-size:1.1rem; letter-spacing:2px;"/>
-    <div class="reg-hint">Format: <span>1 BB CCC DDD</span> — 9 digits total</div>
+    <hr class="divider" />
+
+    <!-- Register Number -->
+    <div class="section-title">Student Details</div>
+    <div class="field">
+      <label>Register Number</label>
+      <input type="text" id="regNo" maxlength="9" placeholder="e.g. 126CCCDD" autocomplete="off"
+        oninput="handleRegNo(this.value)"
+        style="font-family:'Space Mono',monospace; font-size:1.1rem; letter-spacing:2px;" />
+      <div class="reg-hint">Format: <span>1 BB CCC DDD</span> — 9 digits total</div>
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label>Program / Branch <span class="auto-badge">AUTO</span></label>
+        <input type="text" id="program" readonly placeholder="Auto-filled" />
+      </div>
+      <div class="field">
+        <label>Year <span class="auto-badge">AUTO</span></label>
+        <input type="text" id="year" placeholder="Auto-filled" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Name of the Student</label>
+      <input type="text" id="studentName" placeholder="Full name" />
+    </div>
+
+    <hr class="divider" />
+
+    <!-- OD Details -->
+    <div class="section-title">OD Details</div>
+    <div class="two-col">
+      <div class="field">
+        <label>Timing Range</label>
+        <div class="timing-grid">
+          <select id="fromTime" onchange="checkTimeLogic('from')">
+            <option value="">From</option>
+            <option value="8.45 AM">8.45 AM</option>
+            <option value="9.45 AM">9.45 AM</option>
+            <option value="11 AM">11 AM</option>
+            <option value="12 PM">12 PM</option>
+            <option value="1 PM">1 PM</option>
+            <option value="2 PM">2 PM</option>
+            <option value="3 PM">3 PM</option>
+            <option value="4.15 PM">4.15 PM</option>
+            <option value="5.15 PM">5.15 PM</option>
+            <option value="FULL DAY">FULL DAY</option>
+          </select>
+          <div class="to-divider">to</div>
+          <select id="toTime" onchange="checkTimeLogic('to')">
+            <option value="">To</option>
+            <option value="8.45 AM">8.45 AM</option>
+            <option value="9.45 AM">9.45 AM</option>
+            <option value="11 AM">11 AM</option>
+            <option value="12 PM">12 PM</option>
+            <option value="1 PM">1 PM</option>
+            <option value="2 PM">2 PM</option>
+            <option value="3 PM">3 PM</option>
+            <option value="4.15 PM">4.15 PM</option>
+            <option value="5.15 PM">5.15 PM</option>
+            <option value="FULL DAY">FULL DAY</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Place / Location</label>
+        <input type="text" id="place" placeholder="Venue" oninput="syncField('place', this.value)" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Activity Description</label>
+      <textarea id="activityDesc" placeholder="Describe the activity or event..."></textarea>
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label>From Date</label>
+        <input type="date" id="fromDate" />
+      </div>
+      <div class="field">
+        <label>To Date</label>
+        <input type="date" id="toDate" />
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitEntry()">Submit Entry</button>
   </div>
 
-  <div class="two-col">
-    <div class="field">
-      <label>Program / Branch <span class="auto-badge">AUTO</span></label>
-      <input type="text" id="program" readonly placeholder="Auto-filled" />
-    </div>
-    <div class="field">
-      <label>Year <span class="auto-badge">AUTO</span></label>
-      <input type="text" id="year" placeholder="Auto-filled" />
-    </div>
+  <div style="text-align:center; margin-top:1rem;">
+    <button onclick="hardReset()"
+      style="background:none; border:none; color:var(--muted); font-size:0.75rem; cursor:pointer; text-decoration:underline;">
+      Reset All Fields (Clear Cache)
+    </button>
   </div>
 
-  <div class="field">
-    <label>Name of the Student</label>
-    <input type="text" id="studentName" placeholder="Full name" />
+  <div class="admin-link">
+    <div style="margin-bottom:0.8rem; font-size:0.75rem; color:var(--muted);">
+      Developed by <a href="http://www.xiqro.in" target="_blank"
+        style="color:var(--accent); text-decoration:none; font-weight:600;">Xiqro - Next Gen</a>
+    </div>
+    <a href="admin.html">🔐 Admin Dashboard →</a>
   </div>
 
-  <hr class="divider"/>
+  <div class="toast" id="toast"></div>
 
-  <!-- OD Details -->
-  <div class="section-title">OD Details</div>
-  <div class="two-col">
-    <div class="field">
-      <label>OD Timing</label>
-      <select id="odTiming">
-        <option value="">Select</option>
-        <option value="Full Day">Full Day</option>
-        <option value="Half Day - FN">Half Day - FN (Forenoon)</option>
-        <option value="Half Day - AN">Half Day - AN (Afternoon)</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Place</label>
-      <input type="text" id="place" placeholder="Location / venue" />
-    </div>
-  </div>
+  <script>
+    // Init Supabase
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  <div class="field">
-    <label>Activity Description</label>
-    <textarea id="activityDesc" placeholder="Describe the activity or event..."></textarea>
-  </div>
+    // Timing Order for Logical Validation
+    const TIME_MAP = ["8.45 AM", "9.45 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4.15 PM", "5.15 PM"];
 
-  <div class="two-col">
-    <div class="field">
-      <label>From Date</label>
-      <input type="date" id="fromDate" />
-    </div>
-    <div class="field">
-      <label>To Date</label>
-      <input type="date" id="toDate" />
-    </div>
-  </div>
+    function checkTimeLogic(source) {
+      const fromEl = document.getElementById('fromTime');
+      const toEl = document.getElementById('toTime');
 
-  <button class="submit-btn" id="submitBtn" onclick="submitEntry()">Submit Entry</button>
-</div>
+      if (fromEl.value === 'FULL DAY' || toEl.value === 'FULL DAY') {
+        fromEl.value = 'FULL DAY';
+        toEl.value = 'FULL DAY';
+        toEl.disabled = true;
+      } else {
+        toEl.disabled = false;
+        const fromIdx = TIME_MAP.indexOf(fromEl.value);
+        const toIdx = TIME_MAP.indexOf(toEl.value);
 
-<div class="admin-link">
-  <a href="admin.html">🔐 Admin Dashboard →</a>
-</div>
+        // Reset 'To' if it becomes invalid compared to 'From'
+        if (fromIdx !== -1 && toIdx !== -1 && toIdx <= fromIdx) {
+          toEl.value = "";
+        }
 
-<div class="toast" id="toast"></div>
+        // Disable invalid options in 'To' dropdown
+        Array.from(toEl.options).forEach((opt, idx) => {
+          if (opt.value === "" || opt.value === "FULL DAY") return;
+          const optIdx = TIME_MAP.indexOf(opt.value);
+          opt.disabled = optIdx <= fromIdx;
+        });
+      }
 
-<script>
-  // Init Supabase
-  const { createClient } = supabase;
-  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  function handleRegNo(val) {
-    const progInput = document.getElementById('program');
-    const yearInput = document.getElementById('year');
-
-    progInput.classList.remove('filled', 'error');
-    yearInput.classList.remove('filled', 'error');
-
-    if (val.length !== 9) {
-      progInput.value = '';
-      yearInput.value = '';
-      return;
+      syncField('fromTime', fromEl.value);
+      syncField('toTime', toEl.value);
     }
 
-    const result = parseRegisterNo(val);
-    if (!result) {
-      progInput.value = 'Invalid format';
-      progInput.classList.add('error');
-      return;
-    }
+    // Load saved data on start
+    window.onload = () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        Object.keys(data).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.value = data[id];
+            if (id === 'regNo') handleRegNo(data[id]);
+          }
+        });
+        // Restore specific logic states
+        if (data.fromTime || data.toTime) checkTimeLogic('init');
+      }
+    };
 
-    progInput.value = result.branch;
-    yearInput.value = result.year;
-    progInput.classList.add('filled');
+    // Attach listeners to fields for persistence
+    ['enteredBy', 'campName', 'regNo', 'studentName', 'program', 'year', 'fromTime', 'toTime', 'place', 'activityDesc', 'fromDate', 'toDate'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', (e) => {
+        syncField(id, e.target.value);
+      });
+    });
 
-    if (result.year !== 'Fill Manually' && result.year !== '—') {
-      yearInput.classList.add('filled');
+    function handleRegNo(val) {
+      const progInput = document.getElementById('program');
+      const yearInput = document.getElementById('year');
+
+      progInput.classList.remove('filled', 'error');
+      yearInput.classList.remove('filled', 'error');
+      progInput.readOnly = true;
       yearInput.readOnly = true;
-    } else {
-      yearInput.readOnly = false;
-      yearInput.value = '';
-      yearInput.placeholder = 'Enter year manually';
+
+      if (val.length !== 9) {
+        progInput.value = '';
+        yearInput.value = '';
+        return;
+      }
+
+      const result = parseRegisterNo(val);
+      if (!result) {
+        progInput.value = 'Invalid format';
+        progInput.classList.add('error');
+        return;
+      }
+
+      if (result.unknown) {
+        progInput.readOnly = false;
+        progInput.value = '';
+        progInput.placeholder = 'Type Branch Name...';
+        yearInput.readOnly = false;
+        yearInput.value = '';
+        yearInput.placeholder = 'Type Year...';
+        progInput.focus();
+      } else {
+        progInput.value = result.branch;
+        yearInput.value = result.year;
+        progInput.classList.add('filled');
+
+        if (result.year !== 'Fill Manually' && result.year !== '—') {
+          yearInput.classList.add('filled');
+          yearInput.readOnly = true;
+        } else {
+          yearInput.readOnly = false;
+          yearInput.value = '';
+          yearInput.placeholder = 'Enter year manually';
+        }
+      }
     }
-  }
 
-  async function submitEntry() {
-    const btn = document.getElementById('submitBtn');
-    const regNo = document.getElementById('regNo').value.trim();
-    const studentName = document.getElementById('studentName').value.trim();
-    const program = document.getElementById('program').value.trim();
-    const year = document.getElementById('year').value.trim();
-    const odTiming = document.getElementById('odTiming').value;
-    const activityDesc = document.getElementById('activityDesc').value.trim();
-    const place = document.getElementById('place').value.trim();
-    const fromDate = document.getElementById('fromDate').value;
-    const toDate = document.getElementById('toDate').value;
-    const enteredBy = document.getElementById('enteredBy').value.trim();
-    const campName = document.getElementById('campName').value.trim();
+    async function submitEntry() {
+      const btn = document.getElementById('submitBtn');
+      const regNo = document.getElementById('regNo').value.trim();
+      const studentName = document.getElementById('studentName').value.trim();
+      const program = document.getElementById('program').value.trim();
+      const year = document.getElementById('year').value.trim();
 
-    if (!regNo || regNo.length !== 9) { showToast('Enter a valid 9-digit Register Number', true); return; }
-    if (!studentName) { showToast('Enter student name', true); return; }
-    if (!enteredBy) { showToast('Enter your name', true); return; }
-    if (!campName) { showToast('Enter camp name', true); return; }
-    if (!odTiming) { showToast('Select OD timing', true); return; }
-    if (!fromDate || !toDate) { showToast('Select From and To dates', true); return; }
+      const fromT = document.getElementById('fromTime').value;
+      const toT = document.getElementById('toTime').value;
+      let odTiming = '';
 
-    btn.disabled = true;
-    btn.textContent = 'Submitting...';
+      if (fromT === 'FULL DAY' || toT === 'FULL DAY') {
+        odTiming = 'FULL DAY';
+      } else if (fromT && toT) {
+        odTiming = `${fromT} to ${toT}`;
+      }
 
-    const { error } = await db.from('od_entries').insert({
-      register_no: regNo,
-      student_name: studentName,
-      program,
-      year,
-      od_timing: odTiming,
-      activity_description: activityDesc,
-      place,
-      from_date: fromDate,
-      to_date: toDate,
-      entered_by: enteredBy,
-      camp_name: campName,
-    });
+      const activityDesc = document.getElementById('activityDesc').value.trim();
+      const place = document.getElementById('place').value.trim();
+      const fromDate = document.getElementById('fromDate').value;
+      const toDate = document.getElementById('toDate').value;
+      const enteredBy = document.getElementById('enteredBy').value.trim();
+      const campName = document.getElementById('campName').value.trim();
 
-    btn.disabled = false;
-    btn.textContent = 'Submit Entry';
+      if (!regNo || regNo.length !== 9) { showToast('Enter a valid 9-digit Register Number', true); return; }
+      if (!studentName) { showToast('Enter student name', true); return; }
+      if (!enteredBy) { showToast('Enter your name', true); return; }
+      if (!campName) { showToast('Enter camp name', true); return; }
+      if (!odTiming) { showToast('Select OD timing', true); return; }
+      if (!fromDate || !toDate) { showToast('Select From and To dates', true); return; }
 
-    if (error) {
-      console.error(error);
-      showToast('Error saving. Check Supabase config.', true);
-    } else {
-      showToast('✅ Entry saved successfully!');
-      clearForm();
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      const { error } = await db.from('od_entries').insert({
+        register_no: regNo,
+        student_name: studentName,
+        program,
+        year,
+        od_timing: odTiming,
+        activity_description: activityDesc,
+        place,
+        from_date: fromDate,
+        to_date: toDate,
+        entered_by: enteredBy,
+        camp_name: campName,
+      });
+
+      btn.disabled = false;
+      btn.textContent = 'Submit Entry';
+
+      if (error) {
+        console.error(error);
+        showToast('Error saving. Check Supabase config.', true);
+      } else {
+        showToast('✅ Entry saved successfully!');
+        clearForm();
+        // Keep relevant data in localStorage but remove student-specific ones
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        delete saved.regNo;
+        delete saved.studentName;
+        delete saved.program;
+        delete saved.year;
+        // We don't clear fromTime/toTime as per user preference to stay for continuous entries
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+      }
     }
-  }
 
-  function clearForm() {
-    ['regNo','studentName','activityDesc','place','fromDate','toDate'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-    document.getElementById('odTiming').value = '';
-    const prog = document.getElementById('program');
-    const yr = document.getElementById('year');
-    prog.value = ''; prog.classList.remove('filled','error');
-    yr.value = '';   yr.classList.remove('filled','error');
-    yr.readOnly = true;
-    yr.placeholder = 'Auto-filled';
-  }
+    function clearForm() {
+      ['regNo', 'studentName'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      // Explicitly sync the clear to localStorage
+      syncField('regNo', '');
+      syncField('studentName', '');
+      const prog = document.getElementById('program');
+      const yr = document.getElementById('year');
+      prog.value = ''; prog.classList.remove('filled', 'error');
+      yr.value = ''; yr.classList.remove('filled', 'error');
+      yr.readOnly = true;
+      yr.placeholder = 'Auto-filled';
 
-  function showToast(msg, isError=false) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast' + (isError ? ' error-toast' : '');
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
-</script>
+      // Focus back on Register Number for next student
+      document.getElementById('regNo').focus();
+    }
+
+    function hardReset() {
+      if (!confirm('This will clear ALL fields including your name and camp. Continue?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast' + (isError ? ' error-toast' : '');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
 </body>
+
 </html>
