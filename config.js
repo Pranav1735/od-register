@@ -4,7 +4,7 @@
 // Get these from: https://supabase.com → Your Project → Settings → API
 
 const SUPABASE_URL = "https://yuzpsdchdvgejvenorfl.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "sb_publishable_ZkC9C9i9Kl9tdzn2hYiQWQ_3psWt4YL";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1enBzZGNoZHZnZWp2ZW5vcmZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTA2MTUsImV4cCI6MjA5MjM2NjYxNX0.divxcNd9ra5DSRgF3HgouNRNtYuDS3LQwqz3wCGAOyg";
 
 // =============================================
 //  STEP 2: SET YOUR ADMIN PASSWORD
