@@ -149,6 +149,29 @@
       border-style: dashed;
     }
 
+    .logout-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.2);
+      color: var(--red);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      z-index: 100;
+    }
+
+    .logout-btn:hover {
+      background: var(--red);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
     /* Fix for select dropdown visibility */
     select option {
       background-color: #111827;
@@ -325,6 +348,7 @@
 <body>
 
   <div id="mainApp">
+    <button onclick="logout()" class="logout-btn">Log Out</button>
     <div class="header">
       <h1>📋 OD Entry Form</h1>
       <p>Enter student details below — Branch &amp; Year fill automatically</p>
@@ -654,6 +678,12 @@
       localStorage.removeItem('od_session_id');
       localStorage.removeItem('od_session_camp');
       location.reload();
+    }
+
+    function logout() {
+      localStorage.removeItem('od_session_id');
+      localStorage.removeItem('od_session_camp');
+      window.location.href = 'login.html';
     }
 
     function showToast(msg, isError = false) {
