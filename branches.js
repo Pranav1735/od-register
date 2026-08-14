@@ -39,9 +39,9 @@ const BRANCHES = {
 
 // Year lookup tables (BB digits → Year label)
 const YEAR_TABLES = {
-  btech: { "26": "4th Year", "27": "3rd Year", "28": "2nd Year", "29": "1st Year" },
-  bcom: { "26": "3rd Year", "27": "2nd Year", "28": "1st Year" },
-  llb: { "26": "5th Year", "27": "4th Year", "28": "3rd Year", "29": "2nd Year", "30": "1st Year" },
+  btech: { "27": "4th Year", "28": "3rd Year", "29": "2nd Year", "30": "1st Year" },
+  bcom:  { "27": "3rd Year", "28": "2nd Year", "29": "1st Year" },
+  llb:   { "27": "5th Year", "28": "4th Year", "29": "3rd Year", "30": "2nd Year", "31": "1st Year" },
   manual: null,
 };
 
