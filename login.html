@@ -136,7 +136,7 @@
       const pw = document.getElementById('loginPwInput').value.trim();
       const camp = document.getElementById('loginCampInput').value.trim();
 
-      if (id === STAFF_ID && pw === STAFF_PASSWORD && camp) {
+      if (id && STAFF_ACCOUNTS[id] === pw && camp) {
         localStorage.setItem('od_session_id', id);
         localStorage.setItem('od_session_camp', camp);
         // REDIRECT TO OD ENTRY FORM

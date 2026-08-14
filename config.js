@@ -10,8 +10,12 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 //  STEP 2: SET YOUR PASSWORDS
 // =============================================
 const ADMIN_PASSWORD = "Pranav.1735@";  // Admin Dashboard password
-const STAFF_ID = "admin";
-const STAFF_PASSWORD = "password123"; // Staff Entry Form password
+const STAFF_ACCOUNTS = {
+  "Lakshmi": "GS",
+  "Sanjai": "GS",
+  "Pranav": "p",
+  "Priya": "p"
+};
 
 // =============================================
 //  STEP 3: (Optional) Set your college name
