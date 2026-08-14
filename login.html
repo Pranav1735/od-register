@@ -115,29 +115,25 @@
 <body>
   <div class="login-card">
     <h2>🔐 Staff Login</h2>
-    <p>Enter credentials and Camp Name</p>
+    <p>Enter your credentials to continue</p>
     <input type="text" id="loginIdInput" placeholder="Login ID" />
-    <input type="password" id="loginPwInput" placeholder="Password" />
-    <input type="text" id="loginCampInput" placeholder="Camp Name (e.g. NSS 2026)"
-      onkeydown="if(event.key==='Enter') doLogin()" />
+    <input type="password" id="loginPwInput" placeholder="Password" onkeydown="if(event.key==='Enter') doLogin()" />
     <button class="login-btn" onclick="doLogin()">Proceed to Form</button>
     <div class="login-err" id="loginErr">Invalid credentials or missing details.</div>
   </div>
 
   <script>
     // Redirect if already logged in
-    if (localStorage.getItem('od_session_id') && localStorage.getItem('od_session_camp')) {
+    if (localStorage.getItem('od_session_id')) {
       window.location.href = 'index.html';
     }
 
     function doLogin() {
       const id = document.getElementById('loginIdInput').value.trim();
       const pw = document.getElementById('loginPwInput').value.trim();
-      const camp = document.getElementById('loginCampInput').value.trim();
 
-      if (id && STAFF_ACCOUNTS[id] === pw && camp) {
+      if (id && STAFF_ACCOUNTS[id] === pw) {
         localStorage.setItem('od_session_id', id);
-        localStorage.setItem('od_session_camp', camp);
         // REDIRECT TO OD ENTRY FORM
         window.location.href = 'index.html';
       } else {

@@ -355,6 +355,15 @@
     </div>
 
     <div class="card">
+      <!-- Event Details -->
+      <div class="section-title">Event Details</div>
+      <div class="field">
+        <label>Camp Name</label>
+        <input type="text" id="campName" placeholder="e.g. NSS Camp 2026" />
+      </div>
+
+      <hr class="divider" />
+
       <!-- Register Number -->
       <div class="section-title">Student Details</div>
     <div class="field">
@@ -533,7 +542,7 @@
     };
 
     // Attach listeners to fields for persistence
-    ['regNo', 'studentName', 'program', 'year', 'fromTime', 'toTime', 'place', 'activityDesc', 'fromDate', 'toDate'].forEach(id => {
+    ['campName', 'regNo', 'studentName', 'program', 'year', 'fromTime', 'toTime', 'place', 'activityDesc', 'fromDate', 'toDate'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('input', (e) => {
@@ -609,11 +618,12 @@
       const fromDate = document.getElementById('fromDate').value;
       const toDate = document.getElementById('toDate').value;
       const enteredBy = localStorage.getItem('od_session_id');
-      const campName = localStorage.getItem('od_session_camp');
+      const campName = document.getElementById('campName').value.trim();
 
       if (!regNo || regNo.length !== 9) { showToast('Enter a valid 9-digit Register Number', true); return; }
       if (!studentName) { showToast('Enter student name', true); return; }
-      if (!enteredBy || !campName) { showToast('Session expired. Please reload and login.', true); return; }
+      if (!enteredBy) { showToast('Session expired. Please reload and login.', true); return; }
+      if (!campName) { showToast('Enter camp name', true); return; }
       if (!odTiming) { showToast('Select OD timing', true); return; }
       if (!fromDate || !toDate) { showToast('Select From and To dates', true); return; }
 
