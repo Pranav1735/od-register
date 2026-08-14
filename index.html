@@ -520,8 +520,7 @@
     window.onload = () => {
       // Check login session
       const sid = localStorage.getItem('od_session_id');
-      const scamp = localStorage.getItem('od_session_camp');
-      if (!sid || !scamp) {
+      if (!sid) {
         window.location.href = 'login.html';
         return;
       }
