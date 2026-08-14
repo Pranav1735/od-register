@@ -149,6 +149,38 @@
       border-style: dashed;
     }
 
+    /* LOGIN */
+    .login-wrap {
+      display: flex; align-items: center; justify-content: center; min-height: 100vh;
+    }
+    .login-card {
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      width: 380px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .login-card h2 { font-family: 'Outfit', sans-serif; color: var(--accent); margin-bottom: 0.5rem; font-size: 1.8rem; }
+    .login-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+    .login-card input {
+      width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--text); font-family: inherit;
+      font-size: 1.1rem; padding: 0.8rem 1rem; outline: none; text-align: center;
+      margin-bottom: 1.5rem; transition: 0.3s;
+    }
+    .login-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); }
+    .login-btn {
+      width: 100%; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #fff; border: none; border-radius: 12px;
+      font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600;
+      padding: 0.9rem; cursor: pointer; transition: 0.3s;
+    }
+    .login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .login-err { color: var(--red); font-size: 0.85rem; margin-top: 1rem; font-weight: 500; display: none; }
+
     /* Fix for select dropdown visibility */
     select option {
       background-color: #111827;
@@ -324,29 +356,28 @@
 
 <body>
 
-  <div class="header">
-    <h1>📋 OD Entry Form</h1>
-    <p>Enter student details below — Branch &amp; Year fill automatically</p>
+  <!-- LOGIN -->
+  <div class="login-wrap" id="loginWrap">
+    <div class="login-card">
+      <h2>🔐 Staff Login</h2>
+      <p>Enter credentials and Camp Name</p>
+      <input type="text" id="loginIdInput" placeholder="Login ID" />
+      <input type="password" id="loginPwInput" placeholder="Password" />
+      <input type="text" id="loginCampInput" placeholder="Camp Name (e.g. NSS 2026)" onkeydown="if(event.key==='Enter') doLogin()"/>
+      <button class="login-btn" onclick="doLogin()">Proceed to Form</button>
+      <div class="login-err" id="loginErr">Invalid credentials or missing details.</div>
+    </div>
   </div>
 
-  <div class="card">
-    <!-- Staff Identity -->
-    <div class="section-title">Your Details</div>
-    <div class="two-col">
-      <div class="field">
-        <label>Your Name</label>
-        <input type="text" id="enteredBy" placeholder="Staff name" />
-      </div>
-      <div class="field">
-        <label>Camp Name</label>
-        <input type="text" id="campName" placeholder="e.g. NSS Camp 2025" />
-      </div>
+  <div id="mainApp" style="display: none;">
+    <div class="header">
+      <h1>📋 OD Entry Form</h1>
+      <p>Enter student details below — Branch &amp; Year fill automatically</p>
     </div>
 
-    <hr class="divider" />
-
-    <!-- Register Number -->
-    <div class="section-title">Student Details</div>
+    <div class="card">
+      <!-- Register Number -->
+      <div class="section-title">Student Details</div>
     <div class="field">
       <label>Register Number</label>
       <input type="text" id="regNo" maxlength="9" placeholder="e.g. 126CCCDD" autocomplete="off"
@@ -440,13 +471,14 @@
     </button>
   </div>
 
-  <div class="admin-link">
-    <div style="margin-bottom:0.8rem; font-size:0.75rem; color:var(--muted);">
-      Developed by <a href="http://www.xiqro.in" target="_blank"
-        style="color:var(--accent); text-decoration:none; font-weight:600;">Xiqro - Next Gen</a>
+    <div class="admin-link">
+      <div style="margin-bottom:0.8rem; font-size:0.75rem; color:var(--muted);">
+        Developed by <a href="http://www.xiqro.in" target="_blank"
+          style="color:var(--accent); text-decoration:none; font-weight:600;">Xiqro - Next Gen</a>
+      </div>
+      <a href="admin.html">🔐 Admin Dashboard →</a>
     </div>
-    <a href="admin.html">🔐 Admin Dashboard →</a>
-  </div>
+  </div> <!-- Close mainApp div -->
 
   <div class="toast" id="toast"></div>
 
@@ -454,6 +486,29 @@
     // Init Supabase
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const STORAGE_KEY = 'od_form_data';
+
+    function syncField(id, val) {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      saved[id] = val;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+    }
+
+    function doLogin() {
+      const id = document.getElementById('loginIdInput').value.trim();
+      const pw = document.getElementById('loginPwInput').value.trim();
+      const camp = document.getElementById('loginCampInput').value.trim();
+
+      if (id === STAFF_ID && pw === STAFF_PASSWORD && camp) {
+        localStorage.setItem('od_session_id', id);
+        localStorage.setItem('od_session_camp', camp);
+        document.getElementById('loginWrap').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+      } else {
+        document.getElementById('loginErr').style.display = 'block';
+      }
+    }
 
     // Timing Order for Logical Validation
     const TIME_MAP = ["8.45 AM", "9.45 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4.15 PM", "5.15 PM"];
@@ -490,6 +545,14 @@
 
     // Load saved data on start
     window.onload = () => {
+      // Check login session
+      const sid = localStorage.getItem('od_session_id');
+      const scamp = localStorage.getItem('od_session_camp');
+      if (sid && scamp) {
+        document.getElementById('loginWrap').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+      }
+
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const data = JSON.parse(saved);
@@ -506,7 +569,7 @@
     };
 
     // Attach listeners to fields for persistence
-    ['enteredBy', 'campName', 'regNo', 'studentName', 'program', 'year', 'fromTime', 'toTime', 'place', 'activityDesc', 'fromDate', 'toDate'].forEach(id => {
+    ['regNo', 'studentName', 'program', 'year', 'fromTime', 'toTime', 'place', 'activityDesc', 'fromDate', 'toDate'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('input', (e) => {
@@ -581,13 +644,12 @@
       const place = document.getElementById('place').value.trim();
       const fromDate = document.getElementById('fromDate').value;
       const toDate = document.getElementById('toDate').value;
-      const enteredBy = document.getElementById('enteredBy').value.trim();
-      const campName = document.getElementById('campName').value.trim();
+      const enteredBy = localStorage.getItem('od_session_id');
+      const campName = localStorage.getItem('od_session_camp');
 
       if (!regNo || regNo.length !== 9) { showToast('Enter a valid 9-digit Register Number', true); return; }
       if (!studentName) { showToast('Enter student name', true); return; }
-      if (!enteredBy) { showToast('Enter your name', true); return; }
-      if (!campName) { showToast('Enter camp name', true); return; }
+      if (!enteredBy || !campName) { showToast('Session expired. Please reload and login.', true); return; }
       if (!odTiming) { showToast('Select OD timing', true); return; }
       if (!fromDate || !toDate) { showToast('Select From and To dates', true); return; }
 
@@ -647,8 +709,10 @@
     }
 
     function hardReset() {
-      if (!confirm('This will clear ALL fields including your name and camp. Continue?')) return;
+      if (!confirm('This will log you out and clear all fields. Continue?')) return;
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem('od_session_id');
+      localStorage.removeItem('od_session_camp');
       location.reload();
     }
 
