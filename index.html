@@ -306,6 +306,65 @@
       font-family: 'Space Mono', monospace;
     }
 
+    .name-suggest-field {
+      position: relative;
+    }
+
+    .name-suggestions {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% - 0.85rem);
+      z-index: 40;
+      background: #111827;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-height: 260px;
+      overflow-y: auto;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .name-suggestions.open {
+      display: block;
+    }
+
+    .name-suggestion {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .name-suggestion:last-child {
+      border-bottom: none;
+    }
+
+    .name-suggestion:hover,
+    .name-suggestion.active {
+      background: rgba(99, 102, 241, 0.16);
+    }
+
+    .name-suggestion .sug-name {
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    .name-suggestion .sug-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 0.02em;
+    }
+
     @media (max-width: 600px) {
       body {
         padding: 1rem 0.5rem;
@@ -702,6 +761,219 @@
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3000);
     }
+
+    // Name suggestions from previously saved students.
+    // Picking a name fills register number, branch, and year.
+    let studentDirectory = [];
+    let directoryLoaded = false;
+    let directoryPromise = null;
+    let nameMatches = [];
+    let activeSuggestion = -1;
+
+    function loadStudentDirectory(force = false) {
+      if (!force && directoryLoaded) return Promise.resolve();
+      if (directoryPromise) return directoryPromise;
+      directoryPromise = (async () => {
+        const rows = [];
+        const pageSize = 1000;
+        for (let from = 0; from < 5000; from += pageSize) {
+          const { data, error } = await db
+            .from('od_entries')
+            .select('student_name, register_no, program, year, created_at')
+            .order('created_at', { ascending: false })
+            .range(from, from + pageSize - 1);
+          if (error || !data || !data.length) break;
+          rows.push(...data);
+          if (data.length < pageSize) break;
+        }
+
+        const byReg = new Map();
+        rows.forEach(row => {
+          const reg = (row.register_no || '').trim();
+          const name = (row.student_name || '').trim();
+          if (!reg || !name || byReg.has(reg)) return;
+          byReg.set(reg, {
+            student_name: name,
+            register_no: reg,
+            program: (row.program || '').trim(),
+            year: (row.year || '').trim(),
+          });
+        });
+        studentDirectory = [...byReg.values()];
+        directoryLoaded = true;
+      })().finally(() => {
+        directoryPromise = null;
+      });
+      return directoryPromise;
+    }
+
+    function matchStudents(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      const starts = [];
+      const contains = [];
+      studentDirectory.forEach(student => {
+        const name = student.student_name.toLowerCase();
+        if (name.startsWith(q)) starts.push(student);
+        else if (name.includes(q)) contains.push(student);
+      });
+      const byName = (a, b) => a.student_name.localeCompare(b.student_name);
+      starts.sort(byName);
+      contains.sort(byName);
+      return starts.concat(contains).slice(0, 8);
+    }
+
+    function hideNameSuggestions() {
+      const box = document.getElementById('nameSuggestions');
+      if (!box) return;
+      box.classList.remove('open');
+      box.innerHTML = '';
+      nameMatches = [];
+      activeSuggestion = -1;
+    }
+
+    function renderNameSuggestions(matches) {
+      const box = document.getElementById('nameSuggestions');
+      box.innerHTML = '';
+      nameMatches = matches;
+      if (!matches.length) {
+        box.classList.remove('open');
+        activeSuggestion = -1;
+        return;
+      }
+      if (activeSuggestion < 0 || activeSuggestion >= matches.length) activeSuggestion = 0;
+      matches.forEach((student, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'name-suggestion' + (i === activeSuggestion ? ' active' : '');
+        btn.dataset.index = String(i);
+        const name = document.createElement('span');
+        name.className = 'sug-name';
+        name.textContent = student.student_name;
+        const meta = document.createElement('span');
+        meta.className = 'sug-meta';
+        meta.textContent = [student.register_no, student.program, student.year].filter(Boolean).join('  ·  ');
+        btn.append(name, meta);
+        box.appendChild(btn);
+      });
+      box.classList.add('open');
+      const active = box.querySelector('.name-suggestion.active');
+      if (active) {
+        const top = active.offsetTop;
+        const bottom = top + active.offsetHeight;
+        if (top < box.scrollTop) box.scrollTop = top;
+        else if (bottom > box.scrollTop + box.clientHeight) box.scrollTop = bottom - box.clientHeight;
+      }
+    }
+
+    async function refreshNameSuggestions() {
+      const input = document.getElementById('studentName');
+      const query = input.value;
+      if (!query.trim()) {
+        hideNameSuggestions();
+        return;
+      }
+      if (directoryPromise) await directoryPromise;
+      else await loadStudentDirectory(false);
+      if (document.getElementById('studentName').value !== query) return;
+      renderNameSuggestions(matchStudents(query));
+    }
+
+    function applyStudentSuggestion(student) {
+      const nameEl = document.getElementById('studentName');
+      const regEl = document.getElementById('regNo');
+      nameEl.value = student.student_name;
+      regEl.value = student.register_no;
+      handleRegNo(student.register_no);
+
+      const prog = document.getElementById('program');
+      const year = document.getElementById('year');
+      if (student.program) {
+        prog.value = student.program;
+        prog.classList.add('filled');
+        prog.classList.remove('error');
+      }
+      if (student.year && student.year !== '—' && student.year !== 'Fill Manually') {
+        year.value = student.year;
+        year.readOnly = true;
+        year.classList.add('filled');
+        year.classList.remove('error');
+      }
+
+      syncField('studentName', nameEl.value);
+      syncField('regNo', regEl.value);
+      syncField('program', prog.value);
+      syncField('year', year.value);
+      hideNameSuggestions();
+      nameEl.focus();
+    }
+
+    function setupNameSuggestions() {
+      const nameEl = document.getElementById('studentName');
+      if (!nameEl || document.getElementById('nameSuggestions')) return;
+
+      nameEl.setAttribute('autocomplete', 'off');
+      nameEl.parentElement.classList.add('name-suggest-field');
+      const box = document.createElement('div');
+      box.id = 'nameSuggestions';
+      box.className = 'name-suggestions';
+      nameEl.insertAdjacentElement('afterend', box);
+
+      nameEl.addEventListener('input', () => {
+        activeSuggestion = -1;
+        refreshNameSuggestions();
+      });
+
+      nameEl.addEventListener('focus', () => {
+        loadStudentDirectory(true).then(() => {
+          if (document.activeElement === nameEl && nameEl.value.trim()) refreshNameSuggestions();
+        });
+      });
+
+      nameEl.addEventListener('keydown', (e) => {
+        if (!nameMatches.length || !box.classList.contains('open')) return;
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          activeSuggestion = (activeSuggestion + 1) % nameMatches.length;
+          renderNameSuggestions(nameMatches);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          activeSuggestion = (activeSuggestion - 1 + nameMatches.length) % nameMatches.length;
+          renderNameSuggestions(nameMatches);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          const pick = nameMatches[activeSuggestion] || nameMatches[0];
+          if (pick) applyStudentSuggestion(pick);
+        } else if (e.key === 'Escape') {
+          hideNameSuggestions();
+        }
+      });
+
+      box.addEventListener('mousedown', (e) => {
+        const btn = e.target.closest('.name-suggestion');
+        if (!btn) return;
+        e.preventDefault();
+        const pick = nameMatches[Number(btn.dataset.index)];
+        if (pick) applyStudentSuggestion(pick);
+      });
+
+      document.addEventListener('click', (e) => {
+        if (e.target === nameEl || box.contains(e.target)) return;
+        hideNameSuggestions();
+      });
+    }
+
+    const clearFormAfterSubmit = clearForm;
+    clearForm = function () {
+      clearFormAfterSubmit();
+      hideNameSuggestions();
+    };
+
+    window.addEventListener('load', () => {
+      if (!localStorage.getItem('od_session_id')) return;
+      setupNameSuggestions();
+      loadStudentDirectory();
+    });
   </script>
 </body>
 
