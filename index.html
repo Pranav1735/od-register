@@ -542,34 +542,12 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
     }
 
-    // Timing Order for Logical Validation
-    const TIME_MAP = ["8.45 AM", "9.45 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4.15 PM", "5.15 PM"];
-
-    function checkTimeLogic(source) {
+    function checkTimeLogic() {
       const fromEl = document.getElementById('fromTime');
       const toEl = document.getElementById('toTime');
 
-      if (fromEl.value === 'FULL DAY' || toEl.value === 'FULL DAY') {
-        fromEl.value = 'FULL DAY';
-        toEl.value = 'FULL DAY';
-        toEl.disabled = true;
-      } else {
-        toEl.disabled = false;
-        const fromIdx = TIME_MAP.indexOf(fromEl.value);
-        const toIdx = TIME_MAP.indexOf(toEl.value);
-
-        // Reset 'To' if it becomes invalid compared to 'From'
-        if (fromIdx !== -1 && toIdx !== -1 && toIdx <= fromIdx) {
-          toEl.value = "";
-        }
-
-        // Disable invalid options in 'To' dropdown
-        Array.from(toEl.options).forEach((opt, idx) => {
-          if (opt.value === "" || opt.value === "FULL DAY") return;
-          const optIdx = TIME_MAP.indexOf(opt.value);
-          opt.disabled = optIdx <= fromIdx;
-        });
-      }
+      toEl.disabled = false;
+      Array.from(toEl.options).forEach(opt => { opt.disabled = false; });
 
       syncField('fromTime', fromEl.value);
       syncField('toTime', toEl.value);
@@ -665,7 +643,7 @@
       const toT = document.getElementById('toTime').value;
       let odTiming = '';
 
-      if (fromT === 'FULL DAY' || toT === 'FULL DAY') {
+      if (fromT === 'FULL DAY' && toT === 'FULL DAY') {
         odTiming = 'FULL DAY';
       } else if (fromT && toT) {
         odTiming = `${fromT} to ${toT}`;
